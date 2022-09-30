@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\Console\Migrations\StatusCommand;
 use Illuminate\Http\Request;
 use League\Flysystem\CorruptedPathDetected;
 
@@ -215,6 +216,14 @@ class GeneralController extends Controller
             }else{
                 $operand1 = array_pop($stack);
                 $operand2 = array_pop($stack);
+
+                // if there is no operand then there is too much operands
+                if(!isset($operand2))
+                    return response() -> json([
+                        'status' => 'fail',
+                        'message' => 'invalid syntax, too much operators'
+                    ]);
+
                 if($value == '+'){
                     $stack[] = $operand1 + $operand2;
                 }elseif ($value == '-'){
@@ -226,9 +235,20 @@ class GeneralController extends Controller
                 }
             }
         }
+
+        // at the end there will be only one operand in the stack which is the result so if the length of stack is greater than one 
+        // this means that the passed has an invalid syntax
+        if(count($stack) > 1){
+            return response() -> json([
+                'status' => 'fail',
+                'message' => 'invalid syntax, too much operands'
+            ]);
+        }
+        $result = array_pop($stack);
+
         return response() -> json([
             'status' => 'success',
-            'message' => array_pop($stack) // at the end there will be only one operand in the stack which is the result 
+            'message' => $result
         ]);
     }
 
