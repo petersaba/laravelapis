@@ -46,16 +46,23 @@ class GeneralController extends Controller
             }
         }
 
+        // if all lower cases are added and there is still more upper cases
         while(isset($upper_case[$i])){
             $result[] = $upper_case[$i++];
         }
         
+        // if all upper cases are added and there is still more lower cases
         while(isset($lower_case[$j])){
             $result[] = $lower_case[$j++];
         }
 
+        // add the sorted number array at the end
         $result = array_merge($result, $numbers);
+        $result = implode($result);
 
-        return $result;
+        return response() -> json([
+            'status' => 'success',
+            'message' => $result
+        ]);
     }
 }
