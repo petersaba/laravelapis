@@ -121,6 +121,20 @@ class GeneralController extends Controller
     function thirdApi(Request $request){
         $sentence = $request->sentence;
 
+        $found_ints_interval = self::getAllNumberIntervals($sentence);
+
+        $numbers_arr = self::getAllNumbers($found_ints_interval, $sentence);
+
+        $binary_numbers = self::turnIntoBinary($numbers_arr);
+        
+        return response() -> json([
+            'status' => 'success',
+            'message' => $binary_numbers
+        ]);
+        
+    }
+
+    function getAllNumberIntervals($sentence){
         $sentence = str_split($sentence);
         $found_int = FALSE;
         $found_int_at = NULL;
@@ -139,7 +153,10 @@ class GeneralController extends Controller
                 }
             }
         }
+        return $found_ints_interval;
+    }
 
+    function getAllNumbers($found_ints_interval, $sentence){
         $numbers_arr = [];
         foreach($found_ints_interval as $value){
             $number = '';
@@ -148,12 +165,13 @@ class GeneralController extends Controller
             }
             $numbers_arr[] = $number;
         }
-        
-        return response() -> json([
-            'status' => 'success',
-            'message' => $numbers_arr
-        ]);
-        
+        return $numbers_arr;
     }
-    
+
+    function turnIntoBinary($numbers_arr){
+        for($i=0; $i<count($numbers_arr); $i++){
+            $numbers_arr[$i] = decbin($numbers_arr[$i]);
+        }
+        return $numbers_arr;
+    }
 }
