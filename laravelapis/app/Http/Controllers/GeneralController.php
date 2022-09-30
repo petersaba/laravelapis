@@ -120,27 +120,30 @@ class GeneralController extends Controller
     // third API
     function thirdApi(Request $request){
         $sentence = $request->sentence;
+        $sentence_arr = str_split($sentence);
 
-        $found_ints_interval = self::getAllNumberIntervals($sentence);
+        $found_ints_interval = self::getAllNumberIntervals($sentence_arr);
 
         $numbers_arr = self::getAllNumbers($found_ints_interval, $sentence);
 
         $binary_numbers = self::turnIntoBinary($numbers_arr);
-        
+
+        $sentence_arr = self::placeBinaryInArray($binary_numbers, $found_ints_interval, $sentence_arr);
+
+        $sentence = implode($sentence_arr);
+
         return response() -> json([
             'status' => 'success',
-            'message' => $binary_numbers
+            'message' => $sentence
         ]);
-        
     }
 
-    function getAllNumberIntervals($sentence){
-        $sentence = str_split($sentence);
+    function getAllNumberIntervals($sentence_arr){
         $found_int = FALSE;
         $found_int_at = NULL;
         $found_ints_interval = [];
-        for($i =0; $i<count($sentence); $i++){
-            if((int)$sentence[$i] != '0' || $sentence[$i] == '0'){
+        for($i =0; $i<count($sentence_arr); $i++){
+            if((int)$sentence_arr[$i] != '0' || $sentence_arr[$i] == '0'){
                 if(!$found_int){
                     $found_int = TRUE;
                     $found_int_at = $i;
@@ -173,5 +176,18 @@ class GeneralController extends Controller
             $numbers_arr[$i] = decbin($numbers_arr[$i]);
         }
         return $numbers_arr;
+    }
+
+    function placeBinaryInArray($binary_numbers, $found_ints_interval, $sentence_arr){
+        for($key=0; $key<count($found_ints_interval); $key++){
+            $value = $found_ints_interval[$key];
+            $difference = $value[1] - $value[0];
+            array_splice($sentence_arr, $value[0], $difference +1, $binary_numbers[$key]);
+            for($i=$key+1; $i<count($found_ints_interval); $i++){
+                $found_ints_interval[$i][0] -= $difference;
+                $found_ints_interval[$i][1] -= $difference;
+            } 
+        }
+        return $sentence_arr;
     }
 }
