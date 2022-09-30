@@ -138,6 +138,7 @@ class GeneralController extends Controller
         ]);
     }
 
+    // get the start index and the end index of each number inside the sentence and storing them in an array
     function getAllNumberIntervals($sentence_arr){
         $found_int = FALSE;
         $found_int_at = NULL;
@@ -159,6 +160,7 @@ class GeneralController extends Controller
         return $found_ints_interval;
     }
 
+    // get the actual numbers in the sentence based on the start and end index stored in the intervals array
     function getAllNumbers($found_ints_interval, $sentence){
         $numbers_arr = [];
         foreach($found_ints_interval as $value){
@@ -171,6 +173,7 @@ class GeneralController extends Controller
         return $numbers_arr;
     }
 
+    // turn all found numbers to binary
     function turnIntoBinary($numbers_arr){
         for($i=0; $i<count($numbers_arr); $i++){
             $numbers_arr[$i] = decbin($numbers_arr[$i]);
@@ -178,11 +181,14 @@ class GeneralController extends Controller
         return $numbers_arr;
     }
 
+    // replace the numbers by their binary numbers inside the sentence array
     function placeBinaryInArray($binary_numbers, $found_ints_interval, $sentence_arr){
         for($key=0; $key<count($found_ints_interval); $key++){
             $value = $found_ints_interval[$key];
-            $difference = $value[1] - $value[0];
-            array_splice($sentence_arr, $value[0], $difference +1, $binary_numbers[$key]);
+            // the difference in the length of the array and the indexes of elements as multiple elements will be replaced by one element which is the binary number
+            $difference = $value[1] - $value[0]; 
+            array_splice($sentence_arr, $value[0], $difference +1, $binary_numbers[$key]); 
+            // changing the indexes of the upcoming intervals based on the difference of the previous changes to the array
             for($i=$key+1; $i<count($found_ints_interval); $i++){
                 $found_ints_interval[$i][0] -= $difference;
                 $found_ints_interval[$i][1] -= $difference;
