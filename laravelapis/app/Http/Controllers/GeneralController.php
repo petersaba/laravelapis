@@ -207,13 +207,21 @@ class GeneralController extends Controller
         $operands = [];
 
         foreach($prefix_arr as $value){
+            // checking for non numbers and non +_/* operators
+            $pattern = '/[A-Za-z!@#$%^&(),.?":{}|<>=_]/';
+            if(preg_match($pattern, $value)) 
+                return response() -> json([
+                    'status' => 'fail',
+                    'message' => 'invalid value given'
+                ]);
+
             if($value == '0' || (int)$value){
                 $operands[] = $value;
-            }else{
+            }else if($value == '+' || $value == '-' || $value == '*' || $value == '/'){
                 $operators[] = $value;
             }
         }
-        var_dump($operators);
+        var_dump($operators);   
         echo '<br>';
         var_dump($operands);
     }
