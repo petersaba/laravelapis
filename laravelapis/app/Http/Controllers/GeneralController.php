@@ -185,7 +185,8 @@ class GeneralController extends Controller
     function placeBinaryInArray($binary_numbers, $found_ints_interval, $sentence_arr){
         for($key=0; $key<count($found_ints_interval); $key++){
             $value = $found_ints_interval[$key];
-            // the difference in the length of the array and the indexes of elements as multiple elements will be replaced by one element which is the binary number
+            // the difference in the length of the array and the indexes of elements as multiple elements will be 
+            // replaced by one element which is the binary number
             $difference = $value[1] - $value[0]; 
             array_splice($sentence_arr, $value[0], $difference +1, $binary_numbers[$key]); 
             // changing the indexes of the upcoming intervals based on the difference of the previous changes to the array
@@ -200,12 +201,39 @@ class GeneralController extends Controller
     // fourth API
     function fourthApi(Request $request){
         $prefix = $request->prefix;
-
         $prefix_arr = explode(' ', $prefix);
 
-        $operators = [];
-        $operands = [];
+        self::checkValidValues($prefix_arr);
+        
+        $stack = [];
+        while($value = array_pop($prefix_arr)){
+            // if the current value is a number, we add it to the stack
+            if($value == '0' || (int)$value != '0'){
+                $stack[] = $value;
 
+            // if the current value is an operator, we perform the respective operation with the last 2 operands
+            }else{
+                $operand1 = array_pop($stack);
+                $operand2 = array_pop($stack);
+                if($value == '+'){
+                    $stack[] = $operand1 + $operand2;
+                }elseif ($value == '-'){
+                    $stack[] = $operand1 - $operand2;
+                }elseif ($value == '/'){
+                    $stack[] = $operand1 / $operand2;
+                }elseif ($value == '*'){
+                    $stack[] = $operand1 * $operand2;
+                }
+            }
+        }
+        return response() -> json([
+            'status' => 'success',
+            'message' => array_pop($stack) // at the end there will be only one operand in the stack which is the result 
+        ]);
+    }
+
+    // checking for valid values
+    function checkValidValues($prefix_arr){
         foreach($prefix_arr as $value){
             // checking for non numbers and non +_/* operators
             $pattern = '/[A-Za-z!@#$%^&(),.?":{}|<>=_]/';
@@ -214,15 +242,6 @@ class GeneralController extends Controller
                     'status' => 'fail',
                     'message' => 'invalid value given'
                 ]);
-
-            if($value == '0' || (int)$value){
-                $operands[] = $value;
-            }else if($value == '+' || $value == '-' || $value == '*' || $value == '/'){
-                $operators[] = $value;
-            }
         }
-        var_dump($operators);   
-        echo '<br>';
-        var_dump($operands);
     }
 }
