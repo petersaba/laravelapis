@@ -196,4 +196,25 @@ class GeneralController extends Controller
         }
         return $sentence_arr;
     }
+
+    // fourth API
+    function fourthApi(Request $request){
+        $prefix = $request->prefix;
+
+        $prefix_arr = explode(' ', $prefix);
+
+        $operators = [];
+        $operands = [];
+
+        foreach($prefix_arr as $value){
+            if($value == '0' || (int)$value){
+                $operands[] = $value;
+            }else{
+                $operators[] = $value;
+            }
+        }
+        var_dump($operators);
+        echo '<br>';
+        var_dump($operands);
+    }
 }

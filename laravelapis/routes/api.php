@@ -10,6 +10,8 @@ Route::get('/test/api2/{number}', [GeneralController::class, 'secondApi']);
 
 Route::get('/test/api3/{sentence}', [GeneralController::class, 'thirdApi']);
 
+Route::get('/test/api4/{prefix}', [GeneralController::class, 'fourthApi']);
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
