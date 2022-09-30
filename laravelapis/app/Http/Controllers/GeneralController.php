@@ -124,7 +124,7 @@ class GeneralController extends Controller
         $sentence = str_split($sentence);
         $found_int = FALSE;
         $found_int_at = NULL;
-        $found_ints = [];
+        $found_ints_interval = [];
         for($i =0; $i<count($sentence); $i++){
             if((int)$sentence[$i] != '0' || $sentence[$i] == '0'){
                 if(!$found_int){
@@ -134,15 +134,24 @@ class GeneralController extends Controller
             }else{
                 if($found_int){
                     $found_int = FALSE;
-                    $found_ints[] = [$found_int_at, $i -1];
+                    $found_ints_interval[] = [$found_int_at, $i -1];
                     $found_int_at = NULL;
                 }
             }
         }
+
+        $numbers_arr = [];
+        foreach($found_ints_interval as $value){
+            $number = '';
+            for($i=$value[0]; $i<=$value[1]; $i++){
+                $number .= $sentence[$i];
+            }
+            $numbers_arr[] = $number;
+        }
         
         return response() -> json([
             'status' => 'success',
-            'message' => $found_ints
+            'message' => $numbers_arr
         ]);
         
     }
