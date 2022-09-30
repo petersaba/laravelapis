@@ -7,13 +7,13 @@ use League\Flysystem\CorruptedPathDetected;
 
 class GeneralController extends Controller
 {
+    // first API
     function firstApi(Request $request){
         $given_str = $request->data;
         $lower_case = [];
         $upper_case = [];
         $numbers = [];
         $str_arr = str_split($given_str);
-
 
         foreach ($str_arr as $value){
             $ascii = ord($value); // getting the ascii code of the current char
@@ -70,5 +70,19 @@ class GeneralController extends Controller
         }
 
         return $result;
+    }
+
+    // second API
+    function secondApi(Request $request){
+        $number = $request->number;
+        // casting number to int will return 0 for the value 0 and for a non number value
+        if($number != '0' && (int)$number == 0){
+            return response() -> json([
+                'status' => 'fail',
+                'message' => 'passed value is not a number'
+            ]);
+        }else{
+
+        }
     }
 }
