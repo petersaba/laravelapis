@@ -86,31 +86,34 @@ class GeneralController extends Controller
             $number_arr = str_split($number);
             $negative = $number_arr[0] == '-' ? TRUE : FALSE;
             if($negative){
-                array_splice($number_arr, 0, 1);
+                array_splice($number_arr, 0, 1); // remove the '-' from the array 
                 $result = self::fillNegativeNumbers($number_arr);
             }else{
                 $result = self::fillPorsitiveNumbers($number_arr);
             }
 
-            var_dump($result);
+            return response() -> json([
+                'status' => 'success',
+                'message' => $result
+            ]);
         }
     }
 
     function fillNegativeNumbers($number_arr){
         $result = [];
 
-        for($i = 0; $i<count($number_arr); $i++){
+        for($i = 0; $i<count($number_arr); $i++)
             $result[] = -$number_arr[$i] * (10**(count($number_arr) - $i-1));
-        }
+
         return $result;
     }
 
     function fillPorsitiveNumbers($number_arr){
         $result = [];
 
-        for($i = 0; $i<count($number_arr); $i++){
+        for($i = 0; $i<count($number_arr); $i++)
             $result[] = $number_arr[$i] * (10**(count($number_arr) - $i-1));
-        }
+
         return $result;
     }
     
