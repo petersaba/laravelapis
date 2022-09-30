@@ -75,6 +75,7 @@ class GeneralController extends Controller
     // second API
     function secondApi(Request $request){
         $number = $request->number;
+
         // casting number to int will return 0 for the value 0 and for a non number value
         if($number != '0' && (int)$number == 0){
             return response() -> json([
@@ -82,7 +83,35 @@ class GeneralController extends Controller
                 'message' => 'passed value is not a number'
             ]);
         }else{
+            $number_arr = str_split($number);
+            $negative = $number_arr[0] == '-' ? TRUE : FALSE;
+            if($negative){
+                array_splice($number_arr, 0, 1);
+                $result = self::fillNegativeNumbers($number_arr);
+            }else{
+                $result = self::fillPorsitiveNumbers($number_arr);
+            }
 
+            var_dump($result);
         }
     }
+
+    function fillNegativeNumbers($number_arr){
+        $result = [];
+
+        for($i = 0; $i<count($number_arr); $i++){
+            $result[] = -$number_arr[$i] * (10**(count($number_arr) - $i-1));
+        }
+        return $result;
+    }
+
+    function fillPorsitiveNumbers($number_arr){
+        $result = [];
+
+        for($i = 0; $i<count($number_arr); $i++){
+            $result[] = $number_arr[$i] * (10**(count($number_arr) - $i-1));
+        }
+        return $result;
+    }
+    
 }
