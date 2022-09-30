@@ -25,16 +25,29 @@ class GeneralController extends Controller
                 $lower_case[] = $value;
             }      
         }
+        sort($numbers);
 
+        $mergedCharacters = self::mergeCharacters($lower_case, $upper_case);
+
+        // add the sorted number array at the end
+        $result = array_merge($mergedCharacters, $numbers);
+        $result = implode($result);
+
+        return response() -> json([
+            'status' => 'success',
+            'message' => $result
+        ]);
+    }
+
+    // inspired from the merge algorithm
+    function mergeCharacters($lower_case, $upper_case){
         sort($lower_case);
         sort($upper_case);
-        sort($numbers);
 
         $i = 0;
         $j = 0;
         $result = [];
 
-        // inspired from the merge algorithm
         while(isset($upper_case[$i]) && isset($lower_case[$j])){
             $upper_case_ascii = ord($upper_case[$i]);
             $lower_case_ascii = ord($lower_case[$j]);
@@ -56,13 +69,6 @@ class GeneralController extends Controller
             $result[] = $lower_case[$j++];
         }
 
-        // add the sorted number array at the end
-        $result = array_merge($result, $numbers);
-        $result = implode($result);
-
-        return response() -> json([
-            'status' => 'success',
-            'message' => $result
-        ]);
+        return $result;
     }
 }
